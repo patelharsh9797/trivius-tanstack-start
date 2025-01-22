@@ -7,6 +7,8 @@ import {
 import { Meta, Scripts } from "@tanstack/start";
 import type { ReactNode } from "react";
 
+import globalCss from "../global.css?url";
+
 export const Route = createRootRoute({
   head: () => ({
     meta: [
@@ -19,6 +21,12 @@ export const Route = createRootRoute({
       },
       {
         title: "Trivius",
+      },
+    ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: globalCss,
       },
     ],
   }),
@@ -35,7 +43,7 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html>
+    <html suppressHydrationWarning>
       <head>
         <Meta />
       </head>
