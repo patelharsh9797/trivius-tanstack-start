@@ -1,6 +1,7 @@
 // app/routes/__root.tsx
 import {
   Outlet,
+  ScriptOnce,
   ScrollRestoration,
   createRootRoute,
 } from "@tanstack/react-router";
@@ -50,6 +51,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
       <body>
         {children}
         <ScrollRestoration />
+        <ScriptOnce>
+          {`document.documentElement.classList.toggle(
+            'dark',
+            localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+            )`}
+        </ScriptOnce>
         <Scripts />
       </body>
     </html>

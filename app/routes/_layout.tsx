@@ -6,8 +6,8 @@ export const Route = createFileRoute("/_layout")({
 
 function LayoutComponent() {
   return (
-    <div>
-      Hello "/_layout/"! <Outlet />
-    </div>
+    <main className="flex items-center justify-center container mx-auto min-h-screen p-4">
+      <Outlet />
+    </main>
   );
 }
