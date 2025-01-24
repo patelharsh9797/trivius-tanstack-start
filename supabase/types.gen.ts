@@ -202,6 +202,7 @@ export type Database = {
       sessions: {
         Row: {
           current_question: number | null
+          end_time: string | null
           game_id: number
           id: number
           open: boolean
@@ -209,6 +210,7 @@ export type Database = {
         }
         Insert: {
           current_question?: number | null
+          end_time?: string | null
           game_id: number
           id?: number
           open?: boolean
@@ -216,6 +218,7 @@ export type Database = {
         }
         Update: {
           current_question?: number | null
+          end_time?: string | null
           game_id?: number
           id?: number
           open?: boolean

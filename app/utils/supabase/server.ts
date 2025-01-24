@@ -1,3 +1,4 @@
+import { SUPABASE_AUTH_COOKIE_NAME } from "@/utils/constants";
 import { createServerClient } from "@supabase/ssr";
 import { parseCookies, setCookie } from "vinxi/http";
 
@@ -6,6 +7,9 @@ export function getSupabaseServerClient() {
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!,
     {
+      cookieOptions: {
+        name: SUPABASE_AUTH_COOKIE_NAME,
+      },
       cookies: {
         // @ts-ignore Wait till Supabase overload works
         getAll() {

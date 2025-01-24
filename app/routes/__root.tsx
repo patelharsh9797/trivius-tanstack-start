@@ -1,5 +1,6 @@
 // app/routes/__root.tsx
 import {
+  CatchBoundary,
   Outlet,
   ScriptOnce,
   ScrollRestoration,
@@ -8,7 +9,18 @@ import {
 import { Meta, Scripts } from "@tanstack/start";
 import type { ReactNode } from "react";
 
+import { fetchUser } from "@/functions/fetch-user";
 import globalCss from "../global.css?url";
+
+const loadClientCookies = async (name: string) => {
+  const { getClientCookies } = await import("@/utils/client-cookies");
+  return getClientCookies(name);
+};
+
+const loadServerCookies = async (name: string) => {
+  const { getServerCookies } = await import("@/utils/server-cookies");
+  return getServerCookies(name);
+};
 
 export const Route = createRootRoute({
   head: () => ({
@@ -32,6 +44,23 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  beforeLoad: async () => {
+    let cookie: string | undefined;
+
+    if (typeof window === "undefined") {
+      cookie = await loadServerCookies("trivius-auth");
+    } else {
+      cookie = await loadClientCookies("trivius-auth");
+    }
+
+    if (cookie) {
+      const { access_token } = JSON.parse(atob(cookie.replace("base64-", "")));
+      const { user } = await fetchUser({ data: access_token });
+      return { user };
+    }
+
+    return { authCookie: undefined };
+  },
 });
 
 function RootComponent() {
@@ -49,7 +78,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <Meta />
       </head>
       <body>
-        {children}
+        <CatchBoundary
+          getResetKey={() => "reset"}
+          onCatch={(error) => console.error(error)}
+        >
+          {children}
+        </CatchBoundary>
         <ScrollRestoration />
         <ScriptOnce>
           {`document.documentElement.classList.toggle(
